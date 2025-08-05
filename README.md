@@ -1,99 +1,118 @@
 # Crawling Spider
 
-<img src="https://www.scraping-bot.io/wp-content/uploads/2020/03/Spider-Crawlerweb-shine.png" alt="drawing" width="200"/><br>
+<img src="https://www.scraping-bot.io/wp-content/uploads/2020/03/Spider-Crawlerweb-shine.png" alt="Crawling Spider Logo" width="200"/>
 
-A web crawling Bot to extract urls from web implemented in C.
+**Crawling Spider** is a lightweight and efficient web crawling bot written in **C**. It recursively scans web pages, extracts valid URLs from a given domain, and allows you to pause, resume, and continue incomplete sessions with saved progress.
 
-## Description
+---
 
-### Build With:
+## 🚀 About the Project
 
-`C programming` language
+Crawling Spider is a command-line tool built for recursively crawling websites and extracting internal URLs. It respects domain boundaries, supports resume functionality for interrupted crawls, and stores output to local files.
 
-### Features:
+Ideal for learning about low-level web crawlers or extending into more advanced scraping tools.
 
-	1. CLI (Command Line Interface).
-	2. Crawl a website and extract all urls.
-	3. Filters out those urls which do not belong to same domain.
-	4. Provides the opportunity to pause/resume the crawling process.
-	5. Stores results to files.
-	6. User can crawl an existing unfinished crawling project.
+---
 
-## Getting Started
+## 🛠 Built With
 
-### Dependencies
+- **C Language**
+- **libcurl** – HTTP requests
+- **libtidy** – HTML parsing
+- **GCC** – Compilation
 
-To run this crawler you need following pre-requisites:
-* Linux Operating system.
-* libcurl Package
-* libtidy Package
-* gcc compiler
+---
 
-### Installing
+## ✨ Features
 
-* First of all install the libcurl package
-	```
-	sudo apt-get install libcurl4-openssl-dev
-	```
+- ✅ CLI-based interface
+- ✅ Crawl and extract all internal URLs from a website
+- ✅ Filters out external URLs (keeps only same-domain)
+- ✅ Pause/Resume functionality via keyboard shortcuts
+- ✅ Saves crawl progress to local files
+- ✅ Resume from an unfinished crawl session
 
-* Now install libtidy package
-	```
-	sudo apt-get install libtidy-dev
-	```
+---
 
-* Paste all the .c and .h files along with Makefile in a single directory.
+## 🧩 Requirements
 
-* Open terminal into same directory and type following command:
-	```
-	make
-	```
-* All the object files (.o) and executable file named "crawler" will be generated into same directory.
+Make sure your system has:
 
-### Usage
+- Linux OS
+- GCC compiler
+- `libcurl` and `libtidy` installed
 
-* First of all run the created executable file named "crawler"
-	```
-	./crawler
-	```
-	
-* Now your crawler is up and running.
-	
-* Crawler will be asking for some inputs and options.
+---
 
-* You can choose appropriate options and provide relevant inputs to get perfect results.
+## 🔧 Installation
 
-* To pause the crawling process
-	```
-	Ctrl + F
-	```
-* To Resume the crawling process
-	```
-	Ctrl + Q
-	```
+Install dependencies:
 
-* To terminate the crawling process
-	```
-	Ctrl + C
-	```
-	```
-	NOTE: Your progress will be saved to project folder even if you terminate the program.
-	```
+```bash
+sudo apt-get install libcurl4-openssl-dev
+sudo apt-get install libtidy-dev
+```
 
-## Authors
+Clone or download the project, then navigate to its directory and compile:
 
-Muhammad Bilal  
-[@mianbilal10](https://github.com/mianbilal10)
+```bash
+make
+```
 
-Ahmad Dawood
-[@ahmaddawood225](https://github.com/AhmadDawood225)
+> This will generate `.o` files and an executable named `crawler` in the same directory.
 
-Dhanesh Kumar Meghwar
+---
 
-## Version
+## 📦 Usage
 
-* 1.0
-    * Initial Release
+Run the executable:
 
-## License
+```bash
+./crawler
+```
 
-All copywrites reserved. Anyone can contribute to the project and illegal use of this crawler is not permitted and highly discouraged.
+Follow the prompts in the terminal to begin crawling your target website.
+
+### Keyboard Controls
+
+- ⏸️ **Pause:** `Ctrl + F`  
+- ▶️ **Resume:** `Ctrl + Q`  
+- ❌ **Terminate:** `Ctrl + C`  
+  > Your progress will be saved automatically in the project folder.
+
+---
+
+## 👤 Contributors
+
+- **Muhammad Bilal**  
+  [@bilvl](https://github.com/mbilvl)
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**.
+
+```
+MIT License
+
+Copyright (c) 2025 Muhammad Bilal
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the “Software”), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell  
+copies of the Software, and to permit persons to whom the Software is  
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in  
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR  
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,  
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE  
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER  
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,  
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN  
+THE SOFTWARE.
+```
