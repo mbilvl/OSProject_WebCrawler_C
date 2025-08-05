@@ -1,2 +1,3 @@
 crawler
 *.o
+.DS_Store
