@@ -6,8 +6,8 @@ CFLAG=-lcurl -ltidy -lpthread -Wall -I.
 #tagets: Dependencies
 	#actions
 all: crawler
-crawler: main.o bootup.o spider.o crawler.o crawl_frontier.o hash.o queue.o list.o
-	$(CC) -g main.o bootup.o spider.o crawler.o crawl_frontier.o hash.o queue.o list.o -o crawler $(CFLAG) 
+crawler: main.o bootup.o spider.o crawler.o crawl_frontier.o hash.o queue.o list.o state.o
+	$(CC) -g main.o bootup.o spider.o crawler.o crawl_frontier.o hash.o queue.o list.o state.o -o crawler $(CFLAG) 
 main.o: main.c
 	$(CC) -g -c main.c
 bootup.o: bootup.c
@@ -24,6 +24,8 @@ queue.o: queue.c
 	$(CC) -g -c queue.c
 list.o: list.c
 	$(CC) -g -c list.c
+state.o: state.c
+	$(CC) -g -c state.c
 #clean all the object files and crawler executable file.
 clean:
-	rm *.o crawler
+	rm -f *.o crawler

@@ -17,11 +17,22 @@ int bootup(){
 	printf("Press 1 for new_project\n");
 	printf("Press 2 for existing_project\n");
 	printf(">>>>");
-	scanf("%d",&input);
+	char input_buffer[10];
+	if (fgets(input_buffer, sizeof(input_buffer), stdin) == NULL) {
+		return -1;
+	}
+	if (sscanf(input_buffer, "%d", &input) != 1) {
+		printf("Invalid input\n");
+		return -1;
+	}
 	if(input == 1){//new project
 		printf("\nEnter Project Name: \n");
 		printf(">>>>");
-		scanf("%s",proj_name);
+		if (fgets(proj_name, sizeof(proj_name), stdin) == NULL) {
+			return -1;
+		}
+		// Remove trailing newline
+		proj_name[strcspn(proj_name, "\n")] = '\0';
 		//input the project name
 		set_file_path(proj_name);//set all file paths
 		if(create_project(proj_name) == 0){
@@ -29,7 +40,12 @@ int bootup(){
 			printf("\nProject: \"%s\" created successfully!\n\n", proj_name);
 			printf("Enter the starting url: \n");
 			printf(">>>>");
-			scanf("%s",url);//get the starting url from user.
+			if (fgets(url, sizeof(url), stdin) == NULL) {
+				return -1;
+			}
+			// Remove trailing newline
+			url[strcspn(url, "\n")] = '\0';
+			//get the starting url from user.
 			printf("\nPress any key to start crawling.....");
 			
 			while(getchar() !='\n'){}
@@ -49,7 +65,11 @@ int bootup(){
 	}else if(input == 2){//existing project
 		printf("\nEnter Project Name: \n");
 		printf(">>>>");
-		scanf("%s",proj_name);
+		if (fgets(proj_name, sizeof(proj_name), stdin) == NULL) {
+			return -1;
+		}
+		// Remove trailing newline
+		proj_name[strcspn(proj_name, "\n")] = '\0';
 		//get the existing project path
 
 		if(look_up(proj_name) == 0){//exists
@@ -67,8 +87,13 @@ int bootup(){
 			//read domain name from Domain.txt
 			FILE*fp;
 			fp=fopen(root_list,"r");
-			fscanf(fp,"%s",root);
-			fclose(fp);//file close
+			if (fp != NULL) {
+				if (fgets(root, sizeof(root), fp) != NULL) {
+					// Remove trailing newline
+					root[strcspn(root, "\n")] = '\0';
+				}
+				fclose(fp);//file close
+			}
 
 			//create threads
 			create_threads();
@@ -116,10 +141,8 @@ int create_project(char *proj_name){
 		printf("File/Directory already exist\n");
 		return -1;
 	}
-	//create dir
-	if(mkdir(proj_name, 777) == 0){
-		//change dir mode
-		chmod(proj_name, S_IRUSR | S_IWUSR | S_IXUSR);
+	//create dir with proper octal permissions (rwx for user only)
+	if(mkdir(proj_name, 0700) == 0){
 		//create files in dir
 		FILE *fp;
 		fp = fopen(waiting_list, "w");
@@ -139,18 +162,18 @@ int create_project(char *proj_name){
 //extract domain name
 void  extract_root(char *root, char *url){
 
-  char tmp[7];
+  char tmp[8];  // Need 8 bytes to hold 7 chars + null terminator
 
-  strncpy(tmp, url, 6);
+  strncpy(tmp, url, 7);
   tmp[7] = '\0';
 
   //extracting the domain name.
   if(strchr(tmp, '/') != NULL){
-    sscanf(url, "http://%[^/]", root);
+    sscanf(url, "http://%399[^/]", root);  // Limit to 399 chars (size of root - 1)
   }else if(strchr(tmp, ':') != NULL){
-    sscanf(url, "https://%[^/]", root);
+    sscanf(url, "https://%399[^/]", root);
   }else{
-    sscanf(url, "%[^/]", root);   
+    sscanf(url, "%399[^/]", root);   
   }
 
 }//ends
@@ -158,12 +181,9 @@ void  extract_root(char *root, char *url){
 //Create file paths
 void set_file_path(char *proj_name){
 
-	strcpy(waiting_list, proj_name);
-	strcat(waiting_list, "/WaitingList.txt");
-	strcpy(found_list, proj_name);
-	strcat(found_list, "/FoundUrls.txt");
-	strcpy(root_list, proj_name);
-	strcat(root_list, "/Domain.txt");
+	snprintf(waiting_list, sizeof(waiting_list), "%s/WaitingList.txt", proj_name);
+	snprintf(found_list, sizeof(found_list), "%s/FoundUrls.txt", proj_name);
+	snprintf(root_list, sizeof(root_list), "%s/Domain.txt", proj_name);
 
 }
 
@@ -179,8 +199,9 @@ void file_to_queue(char *path){
     char chunk[URL_LEN], copy[URL_LEN];
  	//read line by line
     while(fgets(chunk, sizeof(chunk), fp) != NULL) {
-    	sscanf(chunk, "%[^\n]", copy);
-    	enqueue(&q, copy);
+    	// Remove trailing newline
+    	chunk[strcspn(chunk, "\n")] = '\0';
+    	enqueue(&q, chunk);
     }
     fclose(fp);
 	
@@ -198,8 +219,9 @@ void file_to_hash(char *path){
     char chunk[URL_LEN], copy[URL_LEN];
  	//read line by line
     while(fgets(chunk, sizeof(chunk), fp) != NULL) {
-    	sscanf(chunk, "%[^\n]", copy);
-    	just_insert_to_hash(create_new_node(copy));
+    	// Remove trailing newline
+    	chunk[strcspn(chunk, "\n")] = '\0';
+    	just_insert_to_hash(create_new_node(chunk));
     }
     fclose(fp);
 
