@@ -20,8 +20,8 @@ struct queue{
 };
 typedef struct queue queue_t;
 
-//declare a queue
-queue_t q;
+//declare a queue (defined in state.c)
+extern queue_t q;
 //function to create a node
 node_t *create_new_node(char *url);
 //Enqueue
@@ -33,8 +33,8 @@ int print_queue_to_file(queue_t q, FILE *fp);
 
 #define MAX_NAME 256
 #define MAX_HASH 10000
-//hash table
-node_t *hash_table[MAX_HASH];
+//hash table (defined in state.c)
+extern node_t *hash_table[MAX_HASH];
 //hash function
 unsigned int hashFunction(char *url);
 //Add element to the hash

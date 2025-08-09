@@ -5,7 +5,8 @@ node_t *create_new_node(char *url){
 
 	node_t *node = malloc(sizeof(node_t));
 
-	strcpy(node->url, url);
+	strncpy(node->url, url, URL_LEN - 1);
+	node->url[URL_LEN - 1] = '\0';  // Ensure null termination
 	node->next = NULL;
 
 	return node;

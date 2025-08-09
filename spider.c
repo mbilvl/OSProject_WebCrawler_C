@@ -17,6 +17,18 @@ void *spider(void *no_argument){
     
     while(1)
     {
+        // Check if we should save checkpoint
+        if (should_checkpoint) {
+            pthread_mutex_lock(&mutex);
+            pthread_mutex_lock(&mutex2);
+            file_writer_default();
+            should_checkpoint = 0;
+            printf("\nCheckpoint saved. Exiting...\n");
+            pthread_mutex_unlock(&mutex2);
+            pthread_mutex_unlock(&mutex);
+            exit(0);
+        }
+
         pthread_mutex_lock(&mutex);//lock
         url=dequeue(&q);
         pthread_mutex_unlock(&mutex);//unlock
@@ -27,6 +39,17 @@ void *spider(void *no_argument){
         printf("Crawling......%s\n", url);
         curl_easy_setopt(curl, CURLOPT_URL, url);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_cb);
+        
+        // Set User-Agent
+        curl_easy_setopt(curl, CURLOPT_USERAGENT, "WebCrawler/1.0 (Educational Purpose)");
+        
+        // Follow redirects (up to 5)
+        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+        curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 5L);
+        
+        // Set timeouts
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 30L);  // 30 seconds total timeout
+        curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10L);  // 10 seconds connection timeout
 
         tdoc = tidyCreate();
         tidySetErrorBuffer(tdoc, &tidy_errbuf);
@@ -39,10 +62,13 @@ void *spider(void *no_argument){
             err = tidyParseBuffer(tdoc, &docbuf); /* parse the input */  
             if(err >= 0) {
                 dumpNode(tdoc, tidyGetRoot(tdoc), &head); /* walk the tree */
-                tidyBufFree(&docbuf);//clear buffer
-                tidyBufFree(&tidy_errbuf);//clear buffer
             }
         }
+        
+        // Always clean up tidy resources
+        tidyBufFree(&docbuf);//clear buffer
+        tidyBufFree(&tidy_errbuf);//clear buffer
+        tidyRelease(tdoc);  // Release the tidy document
       
         pthread_mutex_lock(&mutex2);//lock
         crawl_frontier(head);
@@ -50,6 +76,9 @@ void *spider(void *no_argument){
 
         head = NULL;
     }
+    
+    // Clean up curl handle
+    curl_easy_cleanup(curl);
 }//spider ends
 
 //crawl first url
@@ -67,10 +96,10 @@ void *first_spider(char *argv){
 
     insert_hash(create_new_node(argv), &q);//insert first url to hash/queue
 
-    url=dequeue(&q);//dequeue url
-    if(strcmp(url,QUEUE_EMPTY) == 0)//break condition
-        return;
-    printf("Crawling......%s\n", url);
+       url=dequeue(&q);//dequeue url
+   if(strcmp(url,QUEUE_EMPTY) == 0)//break condition
+        return NULL;
+   printf("Crawling......%s\n", url);
     head = crawl(url,head);//crawl first url
     crawl_frontier(head);//insert retrieved urls to hash/ queue
 }

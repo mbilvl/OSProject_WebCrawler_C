@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <tidy/tidy.h>
-#include <tidy/buffio.h>
+#include <tidy/tidybuffio.h>
 #include <curl/curl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -19,11 +19,12 @@
 
 static pthread_mutex_t mutex=PTHREAD_MUTEX_INITIALIZER;
 static pthread_mutex_t mutex2=PTHREAD_MUTEX_INITIALIZER;
-char root[400]; //domain name of first url
+extern char root[400]; //domain name of first url (defined in state.c)
 
 /*-----------------------main.c declarations------------------------------*/
-void file_writer();
+void safe_signal_handler(int sig);
 void file_writer_default();
+extern volatile sig_atomic_t should_checkpoint;
 
 /*-------------------------crawler.c declarations-------------------------------*/
 uint write_cb(char *in, uint size, uint nmemb, TidyBuffer *out);
@@ -38,9 +39,9 @@ void* spider(void *no_argument);
 void *first_spider(char *argv);
 
 /*--------------bootup.c Declarations---------------*/
-//struct used for stat function
-struct stat stats; 
-char waiting_list[100], root_list[100], found_list[100];//file paths
+//struct used for stat function (defined in state.c)
+extern struct stat stats; 
+extern char waiting_list[100], root_list[100], found_list[100];//file paths (defined in state.c)
 
 int bootup();
 int create_project(char *proj_name);

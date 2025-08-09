@@ -28,8 +28,8 @@ void crawl_frontier(node_t *head){
         if(strncmp(root,(head->url)+2,dLength) ==0) 
         {//refined from root domain
           temp=strdup(head->url);
-          strcpy(head->url,"https:");
-          strcat(head->url, temp);
+          snprintf(head->url, URL_LEN, "https:%s", temp);
+          free(temp);  // Free the duplicated string
           insert_hash(create_new_node((head->url)), &q);//insert into hash
         }
 
@@ -37,16 +37,13 @@ void crawl_frontier(node_t *head){
           //concatenate root in front of incomplete urls
         if(head->url[0] == '/'){
           temp=strdup(head->url);
-          strcpy(head->url,"https://");
-          strcat(head->url,root);
-          strcat(head->url, temp);   
+          snprintf(head->url, URL_LEN, "https://%s%s", root, temp);
+          free(temp);  // Free the duplicated string
           insert_hash(create_new_node(head->url), &q);//insert new node into hash
         }else{
           temp=strdup(head->url);
-          strcpy(head->url,"https://");
-          strcat(head->url,root);
-          strcat(head->url, "/");
-          strcat(head->url, temp);   
+          snprintf(head->url, URL_LEN, "https://%s/%s", root, temp);
+          free(temp);  // Free the duplicated string
           insert_hash(create_new_node(head->url), &q);//insert new node into hash
         }
           

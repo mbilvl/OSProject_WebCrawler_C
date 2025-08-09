@@ -44,6 +44,17 @@ node_t *crawl(char* url, node_t *head){
     curl = curl_easy_init();
     curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_cb);
+    
+    // Set User-Agent
+    curl_easy_setopt(curl, CURLOPT_USERAGENT, "WebCrawler/1.0 (Educational Purpose)");
+    
+    // Follow redirects (up to 5)
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+    curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 5L);
+    
+    // Set timeouts
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 30L);  // 30 seconds total timeout
+    curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10L);  // 10 seconds connection timeout
 
     tdoc = tidyCreate();
     tidySetErrorBuffer(tdoc, &tidy_errbuf);
@@ -56,14 +67,16 @@ node_t *crawl(char* url, node_t *head){
       err = tidyParseBuffer(tdoc, &docbuf); /* parse the input */ 
       if(err >= 0) {
         dumpNode(tdoc, tidyGetRoot(tdoc), &head); /* walk the tree */
-        tidyBufFree(&docbuf);//clear buffer
-        tidyBufFree(&tidy_errbuf);//clear buffer
-        curl_easy_cleanup(curl);//clear buffer
-        return head;
       }
-    }else{
-      return NULL;
     }
+    
+    // Always clean up resources
+    tidyBufFree(&docbuf);//clear buffer
+    tidyBufFree(&tidy_errbuf);//clear buffer
+    tidyRelease(tdoc);  // Also release the tidy document
+    curl_easy_cleanup(curl);//clear curl handle
+    
+    return head;
 }
 /*-------------------  crawl function ends  ----------------------*/
 

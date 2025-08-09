@@ -5,21 +5,17 @@ void help();
 int main(int argc, char **argv)
 {   
 	//Signal handler call
-    signal(SIGINT, file_writer);//ctrl+C 
-    signal(SIGSEGV, file_writer);//seg fault
-    signal(SIGABRT, file_writer);//aborted
+    signal(SIGINT, safe_signal_handler);//ctrl+C 
+    // Don't handle SIGSEGV or SIGABRT - let them crash normally for debugging
 
     bootup();//bootup function call
 
     return 0;
 }//main ends
 
-// signal handler
-void file_writer(){
-
-    file_writer_default();
-
-    raise (SIGTERM);
+// Safe signal handler - only sets a flag
+void safe_signal_handler(int sig){
+    should_checkpoint = 1;
 }
 //write to file
 void file_writer_default(){
