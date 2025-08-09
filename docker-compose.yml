@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  web-crawler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: web-crawler-c
+    volumes:
+      # Mount output directory to persist crawled data
+      - ./output:/app/output
+      # Mount config files if needed in the future
+      - ./config:/app/config:ro
+    environment:
+      # Environment variables for future configuration
+      - CRAWLER_MAX_DEPTH=10
+      - CRAWLER_TIMEOUT=30
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
