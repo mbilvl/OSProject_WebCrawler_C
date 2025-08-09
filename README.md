@@ -52,6 +52,53 @@ Make sure your system has:
 
 ## 🔧 Installation
 
+### Option 1: Installation with Docker (Recommended)
+
+The easiest way to run the web crawler is using Docker. This ensures all dependencies are properly installed and the environment is consistent.
+
+#### Prerequisites
+- Docker installed on your system ([Install Docker](https://docs.docker.com/get-docker/))
+- Docker Compose (optional, for advanced usage)
+
+#### Quick Start with Docker
+
+1. Clone the repository:
+```bash
+git clone https://github.com/mbilvl/web-crawler-c.git
+cd web-crawler-c
+```
+
+2. Build and run using Docker:
+```bash
+# Build the Docker image
+docker build -t web-crawler-c .
+
+# Run the crawler
+docker run -it web-crawler-c
+```
+
+3. To persist crawled data, mount a volume:
+```bash
+docker run -it -v $(pwd)/output:/app/output web-crawler-c
+```
+
+#### Using Docker Compose
+
+For more advanced usage with resource limits and easier management:
+
+```bash
+# Start the crawler
+docker-compose up
+
+# Run in background
+docker-compose up -d
+
+# Stop the crawler
+docker-compose down
+```
+
+### Option 2: Manual Installation
+
 Install dependencies:
 
 ```bash
